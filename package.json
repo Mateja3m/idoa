@@ -1,0 +1,29 @@
+{
+  "name": "idoa",
+  "version": "0.1.0",
+  "description": "Infrastructure for Deterministic Onboarding & Analysis",
+  "type": "module",
+  "bin": {
+    "idoa": "./dist/index.js"
+  },
+  "engines": {
+    "node": ">=20"
+  },
+  "scripts": {
+    "build": "tsc -p tsconfig.json",
+    "clean": "rm -rf dist",
+    "doctor": "node dist/index.js doctor"
+  },
+  "keywords": [
+    "onboarding",
+    "diagnostics",
+    "developer-experience",
+    "hyperledger-fabric",
+    "lfdt"
+  ],
+  "license": "Apache-2.0",
+  "devDependencies": {
+    "@types/node": "^24.6.0",
+    "typescript": "^5.9.3"
+  }
+}
