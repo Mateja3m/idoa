@@ -1,11 +1,11 @@
-import { access } from "node:fs/promises";
+import { access, readFile } from "node:fs/promises";
 import { accessSync, constants } from "node:fs";
-import { join } from "node:path";
+import { delimiter, join } from "node:path";
 import { createResult } from "./result.js";
-import { classifyMissingEnv, classifyPathFailure } from "./classification.js";
+import { classifyMissingEnv } from "./classification.js";
 import {
   remediationForMissingEnv,
-  remediationForMissingFile,
+  remediationForUnexpectedWorkspace,
   remediationForNodeVersion
 } from "./remediation.js";
 import type { CheckContext, DiagnosticCheckResult } from "./types.js";
@@ -17,9 +17,9 @@ export async function runCoreChecks(context: CheckContext): Promise<DiagnosticCh
 
   results.push(checkNodeVersion());
   results.push(checkCommandAvailable("npm", "core:npm-available", "npm availability"));
+  results.push(checkPlatform());
   results.push(await checkPathVisible(context));
-  results.push(await checkFileExists(context.cwd, "package.json", "core:package-json", "package.json presence"));
-  results.push(await checkFileExists(context.cwd, "tsconfig.json", "core:tsconfig", "tsconfig presence"));
+  results.push(await checkWorkingDirectory(context));
 
   return results;
 }
@@ -85,7 +85,7 @@ async function checkPathVisible(context: CheckContext): Promise<DiagnosticCheckR
       status: "PASS",
       category: "ENVIRONMENT",
       summary: "PATH is set for the current shell session.",
-      details: `PATH contains ${pathValue.split(":").length} entries.`
+      details: `PATH contains ${pathValue.split(delimiter).length} entries.`
     });
   }
 
@@ -100,33 +100,54 @@ async function checkPathVisible(context: CheckContext): Promise<DiagnosticCheckR
   });
 }
 
-async function checkFileExists(
-  cwd: string,
-  relativePath: string,
-  id: string,
-  title: string
-): Promise<DiagnosticCheckResult> {
-  const filePath = join(cwd, relativePath);
+function checkPlatform(): DiagnosticCheckResult {
+  return createResult({
+    id: "core:platform",
+    title: "Platform detection",
+    status: "PASS",
+    category: "ENVIRONMENT",
+    summary: "Platform detection succeeded.",
+    details: `Detected ${process.platform} ${process.arch} for the current process.`
+  });
+}
+
+async function checkWorkingDirectory(context: CheckContext): Promise<DiagnosticCheckResult> {
+  const packageJsonPath = join(context.cwd, "package.json");
 
   try {
-    await access(filePath, constants.F_OK);
+    await access(packageJsonPath, constants.F_OK);
+    const raw = await readFile(packageJsonPath, "utf8");
+    const parsed = JSON.parse(raw) as { name?: string };
+
+    if (parsed.name === "idoa") {
+      return createResult({
+        id: "core:working-directory",
+        title: "Working directory sanity",
+        status: "PASS",
+        category: "CONFIGURATION",
+        summary: "Current working directory looks like the IDOA repository root.",
+        details: `Found package.json with name "idoa" in ${context.cwd}.`
+      });
+    }
+
     return createResult({
-      id,
-      title,
-      status: "PASS",
-      category: classifyPathFailure(relativePath),
-      summary: `${relativePath} is present.`,
-      details: `Found ${filePath}.`
+      id: "core:working-directory",
+      title: "Working directory sanity",
+      status: "WARN",
+      category: "CONFIGURATION",
+      summary: "Current working directory is a project workspace, but not the IDOA repository root.",
+      details: `Found package.json${parsed.name ? ` with name "${parsed.name}"` : ""} in ${context.cwd}.`,
+      suggested_fix: remediationForUnexpectedWorkspace()
     });
   } catch {
     return createResult({
-      id,
-      title,
+      id: "core:working-directory",
+      title: "Working directory sanity",
       status: "WARN",
-      category: classifyPathFailure(relativePath),
-      summary: `${relativePath} is missing from the current workspace.`,
-      details: `Expected to find ${filePath} while checking baseline project readiness.`,
-      suggested_fix: remediationForMissingFile(relativePath)
+      category: "CONFIGURATION",
+      summary: "Current working directory does not look like a project root.",
+      details: `The CLI did not find a readable package.json in ${context.cwd}.`,
+      suggested_fix: remediationForUnexpectedWorkspace()
     });
   }
 }
@@ -168,17 +189,24 @@ function findCommandPath(commandName: string): string | undefined {
     return undefined;
   }
 
-  for (const entry of pathValue.split(":")) {
+  const executableNames =
+    process.platform === "win32"
+      ? [".exe", ".cmd", ".bat", ""].map((extension) => `${commandName}${extension}`)
+      : [commandName];
+
+  for (const entry of pathValue.split(delimiter)) {
     if (!entry) {
       continue;
     }
 
-    const candidate = `${entry}/${commandName}`;
-    try {
-      accessSync(candidate, constants.X_OK);
-      return candidate;
-    } catch {
-      continue;
+    for (const executableName of executableNames) {
+      const candidate = join(entry, executableName);
+      try {
+        accessSync(candidate, constants.X_OK);
+        return candidate;
+      } catch {
+        continue;
+      }
     }
   }
 

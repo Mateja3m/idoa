@@ -1,7 +1,7 @@
 {
   "name": "idoa",
   "version": "0.1.0",
-  "description": "Infrastructure for Deterministic Onboarding & Analysis",
+  "description": "Implementation repo for the Onboarding Diagnostics Lab",
   "type": "module",
   "bin": {
     "idoa": "./dist/index.js"
@@ -17,6 +17,7 @@
   "keywords": [
     "onboarding",
     "diagnostics",
+    "onboarding-diagnostics-lab",
     "developer-experience",
     "hyperledger-fabric",
     "lfdt"

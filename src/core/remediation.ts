@@ -16,6 +16,10 @@ export function remediationForMissingFile(filePath: string): string {
   return `Create or point the tool at the expected file or directory: ${filePath}`;
 }
 
+export function remediationForUnexpectedWorkspace(): string {
+  return "Run diagnostics from the target repository root for the most consistent baseline results.";
+}
+
 export function remediationForMissingEnv(variableName: string, exampleValue: string): string {
   return `Export ${variableName} before running diagnostics, for example: export ${variableName}=${exampleValue}`;
 }

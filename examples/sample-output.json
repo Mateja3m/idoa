@@ -1,11 +1,10 @@
 {
   "tool": "idoa",
   "version": "0.1.0",
-  "generated_at": "2026-04-04T12:00:00.000Z",
-  "adapter": "fabric",
+  "generated_at": "2026-04-14T10:00:00.000Z",
   "summary": {
-    "pass": 4,
-    "warn": 4,
+    "pass": 5,
+    "warn": 0,
     "fail": 0
   },
   "results": [
@@ -15,7 +14,7 @@
       "status": "PASS",
       "category": "ENVIRONMENT",
       "summary": "Node.js 20.12.0 satisfies the minimum supported major version.",
-      "details": "Detected Node.js 20.12.0; IDOA requires Node.js 20+ for the TypeScript CLI runtime."
+      "details": "Detected Node.js 20.12.0; the CLI diagnostics layer requires Node.js 20+."
     },
     {
       "id": "core:npm-available",
@@ -26,22 +25,28 @@
       "details": "Resolved npm at /usr/local/bin/npm."
     },
     {
-      "id": "fabric:env:fabric_cfg_path",
-      "title": "FABRIC_CFG_PATH presence",
-      "status": "WARN",
-      "category": "CONFIGURATION",
-      "summary": "FABRIC_CFG_PATH is not set.",
-      "details": "This environment variable is commonly needed for adapter-specific onboarding checks.",
-      "suggested_fix": "Export FABRIC_CFG_PATH before running diagnostics, for example: export FABRIC_CFG_PATH=./config"
+      "id": "core:platform",
+      "title": "Platform detection",
+      "status": "PASS",
+      "category": "ENVIRONMENT",
+      "summary": "Platform detection succeeded.",
+      "details": "Detected darwin x64 for the current process."
     },
     {
-      "id": "fabric:placeholder-readiness",
-      "title": "Fabric placeholder readiness",
-      "status": "WARN",
+      "id": "core:path-visible",
+      "title": "PATH readiness",
+      "status": "PASS",
+      "category": "ENVIRONMENT",
+      "summary": "PATH is set for the current shell session.",
+      "details": "PATH contains 12 entries."
+    },
+    {
+      "id": "core:working-directory",
+      "title": "Working directory sanity",
+      "status": "PASS",
       "category": "CONFIGURATION",
-      "summary": "Fabric-specific readiness signals are incomplete.",
-      "details": "No adapter-specific environment hints were found. TODO: extend this adapter with deterministic checks for peer/orderer startup artifacts and local network topology.",
-      "suggested_fix": "Set FABRIC_CFG_PATH or FABRIC_SAMPLES_DIR and add expected local Fabric configuration files before deeper adapter checks."
+      "summary": "Current working directory looks like the IDOA repository root.",
+      "details": "Found package.json with name \"idoa\" in /workspace/idoa."
     }
   ]
 }

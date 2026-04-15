@@ -1,11 +1,10 @@
 import { readFile } from "node:fs/promises";
 import { fileURLToPath } from "node:url";
-import { fabricAdapter } from "../adapters/fabric/index.js";
+import { getAdapter, listAdapters } from "../adapters/index.js";
 import { runCoreChecks } from "../core/checks.js";
 import { countStatuses } from "../core/result.js";
 import type { CheckContext, DoctorOptions, DoctorReport } from "../core/types.js";
 
-const SUPPORTED_ADAPTERS = new Map([[fabricAdapter.name, fabricAdapter]]);
 const PACKAGE_JSON_PATH = fileURLToPath(new URL("../../package.json", import.meta.url));
 
 export async function runDoctor(options: DoctorOptions): Promise<number> {
@@ -18,9 +17,9 @@ export async function runDoctor(options: DoctorOptions): Promise<number> {
   const results = await runCoreChecks(context);
 
   if (options.adapter) {
-    const adapter = SUPPORTED_ADAPTERS.get(options.adapter);
+    const adapter = getAdapter(options.adapter);
     if (!adapter) {
-      const supported = Array.from(SUPPORTED_ADAPTERS.keys()).join(", ");
+      const supported = listAdapters().join(", ");
       process.stderr.write(`Unknown adapter "${options.adapter}". Supported adapters: ${supported}\n`);
       return 1;
     }
@@ -62,7 +61,7 @@ async function readVersion(): Promise<string> {
 
 function printHumanReport(report: DoctorReport) {
   process.stdout.write("IDOA doctor\n");
-  process.stdout.write("Infrastructure for Deterministic Onboarding & Analysis\n");
+  process.stdout.write("Implementation track: Onboarding Diagnostics Lab\n");
   process.stdout.write(`Version: ${report.version}\n`);
   process.stdout.write(`Generated: ${report.generated_at}\n`);
   process.stdout.write(`Adapter: ${report.adapter ?? "core"}\n\n`);

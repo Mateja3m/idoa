@@ -1,59 +1,89 @@
 # IDOA - Infrastructure for Deterministic Onboarding & Analysis
 
-This repository is the implementation repo for the LF Decentralized Trust Labs proposal **Onboarding Reliability Lab**. The project focuses on a practical problem in decentralized systems: developers lose time during onboarding because setup failures are often ambiguous, environment-specific, and hard to remediate consistently.
+IDOA is the implementation repository for the Onboarding Diagnostics Lab workstream. Its purpose is to make onboarding failures deterministic, interpretable, and actionable before developers lose time chasing ambiguous local setup issues.
 
-IDOA is a small open-source toolchain for making onboarding failures more deterministic, interpretable, and actionable.
+## Part of LF Decentralized Trust Labs – Onboarding Diagnostics Lab
 
-## Why this exists
+This repository tracks the implementation side of the lab effort that was merged into LF Decentralized Trust Labs. It is intentionally focused on practical diagnostics and onboarding readiness rather than network services, dashboards, or broader platform orchestration.
 
-In decentralized development stacks, onboarding friction often appears before application logic ever runs. Missing runtimes, shell path issues, incomplete configuration, and inconsistent local setup create failure modes that are difficult to diagnose from error messages alone.
+## Problem Statement
 
-IDOA is designed to:
+Developer onboarding for decentralized systems often fails before application logic even starts. Missing runtimes, PATH issues, inconsistent shells, incomplete local configuration, and toolchain drift can all produce noisy errors that are difficult to interpret.
 
-- check baseline prerequisites before deeper tooling runs
-- classify onboarding issues into structured categories
-- provide concise remediation guidance
-- emit machine-readable output for later analysis and automation
+Those failures are costly because they are often:
 
-## Layered execution model
+- nondeterministic across machines
+- hard to classify from raw tool output
+- difficult to remediate consistently
 
-IDOA intentionally avoids the bootstrap paradox where a Node-based CLI tries to determine whether Node itself is installed.
+## Project Goal
 
-The project uses three layers:
+IDOA provides a small diagnostics-oriented implementation track for onboarding readiness:
 
-1. **Preflight Layer**: a zero-dependency shell script for first-run readiness checks.
-2. **CLI Diagnostics Layer**: a TypeScript CLI for deeper diagnostics after the baseline is ready.
-3. **Adapter Layer**: system-specific onboarding checks built on the shared diagnostics core.
+- a zero-dependency preflight layer for first-run environment validation
+- a Node.js CLI diagnostics layer via `idoa doctor`
+- a minimal adapter model for system-specific checks
 
-### Preflight comes first
+The current target direction is Hyperledger Fabric, but Fabric support is not presented here as complete.
 
-The preflight script does not require Node.js. It checks for:
+## Layered Architecture
 
-- Node.js presence
-- npm presence
-- PATH readiness
-- basic shell and workspace state
+IDOA is organized as three layers:
 
-This makes it safe to run as the first onboarding step.
+1. `scripts/preflight.sh`
+   A zero-dependency shell layer for baseline readiness checks before relying on Node.js tooling.
+2. `idoa doctor`
+   A TypeScript CLI diagnostics layer for deterministic human-readable and JSON reports.
+3. `src/adapters/*`
+   A small adapter layer for target-specific checks that reuse the shared result model.
 
-Run it with:
+This separation keeps baseline environment validation lightweight while leaving room for deeper diagnostics once prerequisites are available.
+
+See [architecture.md](/Users/milanmatejic/Desktop/personal/Projects/idoa/docs/architecture.md) for the detailed design notes.
+
+## Current Status
+
+The repository currently includes:
+
+- a zero-dependency preflight script for baseline environment readiness
+- a minimal `idoa doctor` command with deterministic `PASS` / `WARN` / `FAIL` output
+- JSON output support via `idoa doctor --json`
+- a shared result model for future adapter checks
+- a lightweight Fabric-oriented adapter path as an initial direction, not a finished integration
+
+Current `doctor` checks stay intentionally small and implementation-aligned:
+
+- Node.js version compatibility
+- npm availability
+- OS and architecture detection
+- PATH visibility
+- working-directory sanity
+
+## Near-Term Roadmap
+
+- stabilize the repository foundation and CLI entrypoint
+- expand zero-dependency preflight coverage for common onboarding failures
+- formalize the adapter contract and add first Fabric-oriented checks
+- improve remediation guidance and report shaping without widening scope
+
+A compact phase-based version is in [roadmap.md](/Users/milanmatejic/Desktop/personal/Projects/idoa/docs/roadmap.md).
+
+## Usage
+
+Run the zero-dependency preflight first:
 
 ```sh
 sh scripts/preflight.sh
 ```
 
-The script prints `PASS`, `WARN`, and `FAIL` style results and exits non-zero when critical prerequisites are missing.
-
-## CLI diagnostics
-
-After preflight passes and Node.js is available, build the CLI:
+Build the CLI:
 
 ```sh
 npm install
 npm run build
 ```
 
-Run the local CLI directly:
+Run diagnostics locally:
 
 ```sh
 node dist/index.js doctor
@@ -61,54 +91,21 @@ node dist/index.js doctor --json
 node dist/index.js doctor --adapter fabric
 ```
 
-Optional local linking is supported after build:
+Optional local linking after build:
 
 ```sh
 npm link
 idoa doctor
 ```
 
-## Current scope
+## Output Model
 
-This v0 scaffold includes:
+Each diagnostic finding uses a deterministic status:
 
-- baseline environment checks for Node.js, npm, PATH, and local config files
-- a structured diagnostics result schema
-- human-readable and JSON output modes
-- actionable remediation guidance for warnings and failures
-- a reference Hyperledger Fabric adapter path
+- `PASS` for a satisfied prerequisite or expected condition
+- `WARN` for a non-blocking issue that reduces confidence or completeness
+- `FAIL` for a blocking prerequisite that should be fixed before deeper onboarding steps
 
-This repository does **not** attempt to implement heavy network integrations or production orchestration logic in v0. The goal is a credible and understandable early implementation aligned with the proposal.
+Human-readable output is intended for direct operator use. JSON output is intended for later automation, CI shaping, or lab analysis workflows.
 
-## Hyperledger Fabric reference adapter
-
-Hyperledger Fabric is the initial reference adapter, not a hard-coded product boundary for the project.
-
-The Fabric adapter currently performs lightweight checks such as:
-
-- presence of expected Fabric-related markers in the working directory
-- presence of adapter-specific environment variables
-- placeholder readiness checks for future peer and orderer validation
-
-The shared core is intended to expand later to other decentralized systems while remaining vendor-neutral and open-source friendly.
-
-## Result schema
-
-Each check result includes:
-
-- `id`
-- `title`
-- `status` (`PASS`, `WARN`, `FAIL`)
-- `category`
-- `summary`
-- `details`
-- `suggested_fix`
-
-Current categories:
-
-- `ENVIRONMENT`
-- `CONFIGURATION`
-- `CONNECTIVITY`
-- `DEPENDENCY`
-- `PERMISSIONS`
-- `UNKNOWN`
+Examples are available in [examples.md](/Users/milanmatejic/Desktop/personal/Projects/idoa/docs/examples.md) and [sample-output.json](/Users/milanmatejic/Desktop/personal/Projects/idoa/examples/sample-output.json).
