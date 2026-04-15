@@ -39,7 +39,7 @@ IDOA is organized as three layers:
 
 This separation keeps baseline environment validation lightweight while leaving room for deeper diagnostics once prerequisites are available.
 
-See [architecture.md](/Users/milanmatejic/Desktop/personal/Projects/idoa/docs/architecture.md) for the detailed design notes.
+See [architecture.md](docs/architecture.md) for the detailed design notes.
 
 ## Current Status
 
@@ -66,7 +66,7 @@ Current `doctor` checks stay intentionally small and implementation-aligned:
 - formalize the adapter contract and add first Fabric-oriented checks
 - improve remediation guidance and report shaping without widening scope
 
-A compact phase-based version is in [roadmap.md](/Users/milanmatejic/Desktop/personal/Projects/idoa/docs/roadmap.md).
+A compact phase-based version is in [roadmap.md](docs/roadmap.md).
 
 ## Usage
 
@@ -108,4 +108,4 @@ Each diagnostic finding uses a deterministic status:
 
 Human-readable output is intended for direct operator use. JSON output is intended for later automation, CI shaping, or lab analysis workflows.
 
-Examples are available in [examples.md](/Users/milanmatejic/Desktop/personal/Projects/idoa/docs/examples.md) and [sample-output.json](/Users/milanmatejic/Desktop/personal/Projects/idoa/examples/sample-output.json).
+Examples are available in [examples.md](docs/examples.md) and [sample-output.json](examples/sample-output.json).
