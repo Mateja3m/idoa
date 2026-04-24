@@ -24,6 +24,8 @@ git checkout -b feat/your-feature-name
 
 Make your changes and commit them locally.
 
+Always use `git commit -s` so each commit includes a `Signed-off-by` trailer.
+
 Push your branch:
 
 ```sh
