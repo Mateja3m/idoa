@@ -24,7 +24,7 @@ git checkout -b feat/your-feature-name
 
 Make your changes and commit them locally.
 
-If your workflow requires a sign-off, use `git commit -s` so the commit includes a `Signed-off-by` trailer.
+Always use `git commit -s` so each commit includes a `Signed-off-by` trailer.
 
 Push your branch:
 
