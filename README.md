@@ -6,6 +6,8 @@ IDOA is the implementation repository for the Onboarding Diagnostics Lab workstr
 
 This repository tracks the implementation side of the lab effort that was merged into LF Decentralized Trust Labs. It is intentionally focused on practical diagnostics and onboarding readiness rather than network services, dashboards, or broader platform orchestration.
 
+The lab is listed in the LF Decentralized Trust Labs catalog: [Onboarding Diagnostics Lab](https://lf-decentralized-trust-labs.github.io/labs/lfdt/onboarding-diagnostics-lab.html).
+
 ## Problem Statement
 
 Developer onboarding for decentralized systems often fails before application logic even starts. Missing runtimes, PATH issues, inconsistent shells, incomplete local configuration, and toolchain drift can all produce noisy errors that are difficult to interpret.
