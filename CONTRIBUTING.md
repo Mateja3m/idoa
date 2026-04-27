@@ -5,8 +5,8 @@ Contributions are welcome. This project focuses on onboarding diagnostics and CL
 ## Development setup
 
 ```sh
-git clone https://github.com/Mateja3m/idoa
-cd idoa
+git clone https://github.com/LF-Decentralized-Trust-labs/onboard-diagnostics
+cd onboard-diagnostics
 npm install
 npm run build
 npm run doctor
