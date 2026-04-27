@@ -38,7 +38,7 @@ Adapter: core
   id: core:working-directory
   category: CONFIGURATION
   summary: Current working directory looks like the IDOA repository root.
-  details: Found package.json with name "idoa" in /workspace/idoa.
+  details: Found package.json with name "idoa" in /workspace/onboard-diagnostics.
 
 Summary: PASS=5 WARN=0 FAIL=0
 ```
@@ -94,7 +94,7 @@ Summary: PASS=5 WARN=0 FAIL=0
       "status": "PASS",
       "category": "CONFIGURATION",
       "summary": "Current working directory looks like the IDOA repository root.",
-      "details": "Found package.json with name \"idoa\" in /workspace/idoa."
+      "details": "Found package.json with name \"idoa\" in /workspace/onboard-diagnostics."
     }
   ]
 }

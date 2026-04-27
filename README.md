@@ -48,7 +48,7 @@ See [architecture.md](docs/architecture.md) for the detailed design notes.
 The repository currently includes:
 
 - a zero-dependency preflight script for baseline environment readiness
-- a minimal `idoa doctor` command with deterministic `PASS` / `WARN` / `FAIL` output
+- a minimal `idoa doctor` command with deterministic `PASS`/`WARN`/`FAIL` output
 - JSON output support via `idoa doctor --json`
 - a shared result model for future adapter checks
 - a lightweight Fabric-oriented adapter path as an initial direction, not a finished integration

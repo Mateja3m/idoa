@@ -46,7 +46,7 @@
       "status": "PASS",
       "category": "CONFIGURATION",
       "summary": "Current working directory looks like the IDOA repository root.",
-      "details": "Found package.json with name \"idoa\" in /workspace/idoa."
+      "details": "Found package.json with name \"idoa\" in /workspace/onboard-diagnostics."
     }
   ]
 }
