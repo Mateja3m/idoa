@@ -29,15 +29,17 @@ export interface DoctorOptions {
   json?: boolean;
 }
 
+export interface StatusCountSummary {
+  pass: number;
+  warn: number;
+  fail: number;
+}
+
 export interface DoctorReport {
   tool: string;
   version: string;
   generated_at: string;
   adapter?: string;
-  summary: {
-    pass: number;
-    warn: number;
-    fail: number;
-  };
+  summary: StatusCountSummary;
   results: DiagnosticCheckResult[];
 }
