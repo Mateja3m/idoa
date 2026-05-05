@@ -2,7 +2,7 @@ import { readFile } from "node:fs/promises";
 import { fileURLToPath } from "node:url";
 import { getAdapter, listAdapters } from "../adapters/index.js";
 import { runCoreChecks } from "../core/checks.js";
-import { countStatuses } from "../core/result.js";
+import { countStatuses, exitCodeForSummary } from "../core/result.js";
 import type { CheckContext, DoctorOptions, DoctorReport } from "../core/types.js";
 
 const PACKAGE_JSON_PATH = fileURLToPath(new URL("../../package.json", import.meta.url));
@@ -35,7 +35,7 @@ export async function runDoctor(options: DoctorOptions): Promise<number> {
     printHumanReport(report);
   }
 
-  return report.summary.fail > 0 ? 1 : 0;
+  return exitCodeForSummary(report.summary);
 }
 
 async function createReport(results: DoctorReport["results"], adapter?: string): Promise<DoctorReport> {

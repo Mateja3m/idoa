@@ -2,6 +2,7 @@
 
 set -u
 
+# Keep preflight CI-friendly: WARN does not fail the process, but any FAIL does.
 EXIT_CODE=0
 
 print_result() {

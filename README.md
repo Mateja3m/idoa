@@ -110,4 +110,20 @@ Each diagnostic finding uses a deterministic status:
 
 Human-readable output is intended for direct operator use. JSON output is intended for later automation, CI shaping, or lab analysis workflows.
 
+## Exit Code Behavior
+
+Both diagnostics layers use the same process exit behavior so they can be used safely in CI and scripted onboarding flows:
+
+- exit `0` when all checks are `PASS`, or when the run contains only `PASS` and `WARN`
+- exit non-zero when at least one check is `FAIL`
+
+This applies to:
+
+- `sh scripts/preflight.sh`
+- `node dist/index.js doctor`
+- `node dist/index.js doctor --json`
+- `node dist/index.js doctor --adapter fabric`
+
+In practice, `WARN` keeps the run actionable without failing automation, while `FAIL` is reserved for blocking prerequisites that should stop deeper onboarding steps.
+
 Examples are available in [examples.md](docs/examples.md) and [sample-output.json](examples/sample-output.json).

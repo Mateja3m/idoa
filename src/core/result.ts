@@ -1,4 +1,4 @@
-import type { CheckCategory, CheckStatus, DiagnosticCheckResult } from "./types.js";
+import type { CheckCategory, CheckStatus, DiagnosticCheckResult, StatusCountSummary } from "./types.js";
 
 interface ResultInput {
   id: string;
@@ -22,7 +22,7 @@ export function createResult(input: ResultInput): DiagnosticCheckResult {
   };
 }
 
-export function countStatuses(results: DiagnosticCheckResult[]) {
+export function countStatuses(results: DiagnosticCheckResult[]): StatusCountSummary {
   return results.reduce(
     (accumulator, result) => {
       accumulator[result.status.toLowerCase() as "pass" | "warn" | "fail"] += 1;
@@ -30,4 +30,8 @@ export function countStatuses(results: DiagnosticCheckResult[]) {
     },
     { pass: 0, warn: 0, fail: 0 }
   );
+}
+
+export function exitCodeForSummary(summary: StatusCountSummary): 0 | 1 {
+  return summary.fail > 0 ? 1 : 0;
 }
